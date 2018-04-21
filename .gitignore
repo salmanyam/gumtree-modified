@@ -1,0 +1,15 @@
+target/
+samples/
+.settings/
+.project
+.classpath
+.recommenders/
+.metadata/
+.idea/
+*.iml
+*.ipr
+*.iws
+.gradle/
+build/
+out/
+.vagrant/

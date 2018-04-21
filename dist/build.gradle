@@ -1,0 +1,34 @@
+apply plugin: 'application'
+
+mainClassName = 'com.github.gumtreediff.client.Run'
+applicationName = 'gumtree'
+jar.enabled = false
+distZip.archiveName  = 'gumtree.zip'
+uploadArchives.enabled = false
+distTar.enabled = false
+
+description = 'GumTree distribution.'
+
+dependencies {
+	compile project(':client')
+	compile project(':client.diff')
+	compile project(':gen.antlr3')
+	compile project(':gen.antlr3-antlr')
+	compile project(':gen.antlr3-json')
+	compile project(':gen.antlr3-php')
+	compile project(':gen.antlr3-r')
+	compile project(':gen.antlr3-xml')
+	compile project(':gen.c')
+	compile project(':gen.css')
+	compile project(':gen.jdt')
+	compile project(':gen.js')
+	compile project(':gen.python')
+	compile project(':gen.ruby')
+	compile project(':gen.srcml')
+}
+
+run {
+	if ( project.hasProperty("params") ) {
+		args Eval.me(params)
+	}
+}
