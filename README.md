@@ -1,5 +1,7 @@
 # GumTree
 
+## This is the original gumtree implementation for finding fine-grained source code changes. This implementation is extended to support the functionalities to describe source code changes using a natural language.
+
 ## Status
 
 * Master branch: ![Build Status](https://travis-ci.org/GumTreeDiff/gumtree.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/GumTreeDiff/gumtree/badge.svg?branch=master)](https://coveralls.io/github/GumTreeDiff/gumtree?branch=master)
