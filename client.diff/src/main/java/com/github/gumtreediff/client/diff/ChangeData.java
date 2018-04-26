@@ -24,11 +24,13 @@ public class ChangeData {
     private String type;
     private String methodName;
     private String className;
+    private String fieldName;
     
-    public ChangeData(String type, String className, String methodName) {
+    public ChangeData(String type, String className, String methodName, String fieldName) {
         this.type = type;
         this.methodName = methodName;
         this.className = className;
+        this.fieldName = fieldName;
     }
 
     public String getType() {
@@ -43,8 +45,13 @@ public class ChangeData {
         return className;
     }
     
+    public String getFieldName() {
+        return fieldName;
+    }
+    
     @Override
     public String toString() {
-        return "Type: " + this.type + ", Method: " + this.methodName + ", Class: " + this.className;
+        return "Type: " + this.type + ", Field: " + this.fieldName 
+                + ", Method: " + this.methodName + ", Class: " + this.className;
     }
 }

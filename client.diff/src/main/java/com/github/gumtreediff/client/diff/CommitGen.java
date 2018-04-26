@@ -76,6 +76,7 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
 
         String className = "";
         String methodName = "";
+        String fieldName = "";
         
         dstVisited.put(dstRoot.getId(), true);
         
@@ -91,7 +92,7 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
                     }
                 }
                 // Initiates a recursive call
-                createDstNodes(dstTop, child, className, methodName, 0);
+                createDstNodes(dstTop, child, className, methodName, fieldName, 0);
             }
         }
         
@@ -102,6 +103,7 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
 
         className = "";
         methodName = "";
+        fieldName = "";
         
         srcVisited.put(srcRoot.getId(), true);
         
@@ -116,7 +118,7 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
                     }
                 }
                 // Initiates a recursive call
-                createSrcNodes(srcTop, child, className, methodName, 0);
+                createSrcNodes(srcTop, child, className, methodName, fieldName, 0);
             }
             
         }
@@ -135,7 +137,7 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
     }
 
     private void createDstNodes(DefaultMutableTreeNode parent, 
-              ITree tree, String className, String methodName, int space) {
+              ITree tree, String className, String methodName, String fieldName, int space) {
         if (tree == null) return;
         
         if (tree.toPrettyString(getDstTreeContext()).equals("Javadoc"))
@@ -153,14 +155,14 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
         if (classifyTrees.getDstAddTrees().contains(tree)) {
             r = " DST :DST ADD";
             //System.out.println(format + tree.toPrettyString(getDstTreeContext()) + r);
-            processDstAdd(tree, className, methodName);
+            processDstAdd(tree, className, methodName, fieldName);
             return;
         }
         else if (classifyTrees.getSrcUpdTrees().contains(tree)) r = " DST :SRC UPD";
         else if (classifyTrees.getDstUpdTrees().contains(tree)) {
             r = " DST :DST UPd";
             //System.out.println(format + tree.toPrettyString(getDstTreeContext()) + r);
-            processDstUpd(tree, className, methodName);
+            processDstUpd(tree, className, methodName, fieldName);
             return;
         }
         else if (classifyTrees.getSrcMvTrees().contains(tree)) r = " DST :SRC MOV";
@@ -184,29 +186,29 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
                         break;
                     }
                 }
-                createDstNodes(node, child, className, mname, space + 1);
+                createDstNodes(node, child, className, mname, fieldName, space + 1);
             } else if (child.toPrettyString(getDstTreeContext()).equals("FieldDeclaration")) {
-                String mname = "";
+                String fname = "";
                 for (ITree c : child.getChildren()) {
                     if (getDstTreeContext().getTypeLabel(c).equalsIgnoreCase("VariableDeclarationFragment")) {
                         for (ITree cc : c.getChildren()) {
                             if (!cc.hasLabel()) continue;
                             if (getDstTreeContext().getTypeLabel(cc).equalsIgnoreCase("SimpleName")) {
-                                mname = cc.getLabel();
+                                fname = cc.getLabel();
                                 break;
                             }
                         }
                     }
                 }
-                createDstNodes(node, child, className, mname, space + 1);
+                createDstNodes(node, child, className, methodName, fname, space + 1);
             }
             else
-                createDstNodes(node, child, className, methodName, space + 1);
+                createDstNodes(node, child, className, methodName, fieldName, space + 1);
         }
     }
 
     private void createSrcNodes(DefaultMutableTreeNode parent, 
-            ITree tree, String className, String methodName, int space) {
+            ITree tree, String className, String methodName, String fieldName, int space) {
         if (tree == null) return;
 
         if (tree.toPrettyString(getSrcTreeContext()).equals("Javadoc"))
@@ -223,7 +225,7 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
         if (classifyTrees.getSrcDelTrees().contains(tree)) {
             r = " SRC :SRC DEL";
             //System.out.println(format + tree.toPrettyString(getSrcTreeContext()) + r);
-            processSrcDelete(tree, className, methodName);
+            processSrcDelete(tree, className, methodName, fieldName);
             return;
         }
         else if (classifyTrees.getSrcUpdTrees().contains(tree)) r = " SRC :SRC UPD";
@@ -249,33 +251,34 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
                         break;
                     }
                 }
-                createSrcNodes(node, child, className, mname, space + 1);
+                createSrcNodes(node, child, className, mname, fieldName, space + 1);
             } else if (child.toPrettyString(getSrcTreeContext()).equals("FieldDeclaration")) {
-                String mname = "";
+                String fname = "";
                 for (ITree c : child.getChildren()) {
                     if (getSrcTreeContext().getTypeLabel(c).equalsIgnoreCase("VariableDeclarationFragment")) {
                         for (ITree cc : c.getChildren()) {
                             if (!cc.hasLabel()) continue;
                             if (getSrcTreeContext().getTypeLabel(cc).equalsIgnoreCase("SimpleName")) {
-                                mname = cc.getLabel();
+                                fname = cc.getLabel();
                                 break;
                             }
                         }
                     }
                 }
-                createSrcNodes(node, child, className, mname, space + 1);
+                createSrcNodes(node, child, className, methodName, fname, space + 1);
             }
             else
-                createSrcNodes(node, child, className, methodName, space + 1);
+                createSrcNodes(node, child, className, methodName, fieldName, space + 1);
     }
     
-    private void processDstAdd(ITree treeNode, String className, String methodName) {
+    private void processDstAdd(ITree treeNode, String className, String methodName, String fieldName) {
         //System.out.println("salmaninsert " + treeNode.toPrettyString(getDstTreeContext()) 
           //                 + " " + className + " " + methodName);
         insertedItems.add(new ChangeData(
                 treeNode.toPrettyString(getDstTreeContext()), 
                 className,
-                methodName));
+                methodName,
+                fieldName));
         
         /*DefaultMutableTreeNode top = new DefaultMutableTreeNode(treeNode);
         for (ITree child: treeNode.getChildren()) {
@@ -283,13 +286,14 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
         }*/
     }
     
-    private void processDstUpd(ITree treeNode, String className, String methodName) {
+    private void processDstUpd(ITree treeNode, String className, String methodName, String fieldName) {
         //System.out.println("salmanupdate " + treeNode.toPrettyString(getDstTreeContext()) 
           //                 + " " + className + " " + methodName);
         updateItems.add(new ChangeData(
                 treeNode.toPrettyString(getDstTreeContext()), 
                 className,
-                methodName));
+                methodName,
+                fieldName));
         
         /*DefaultMutableTreeNode top = new DefaultMutableTreeNode(treeNode);
         for (ITree child: treeNode.getChildren()) {
@@ -297,13 +301,14 @@ public final class CommitGen extends AbstractDiffClient<AbstractDiffClient.Optio
         }*/
     }
     
-    private void processSrcDelete(ITree treeNode, String className, String methodName) {
+    private void processSrcDelete(ITree treeNode, String className, String methodName, String fieldName) {
         //System.out.println("salmandelete " + treeNode.toPrettyString(getSrcTreeContext()) + " " 
           //                 + className + " " + methodName);
         deletedItems.add(new ChangeData(
                 treeNode.toPrettyString(getSrcTreeContext()), 
                 className,
-                methodName));
+                methodName,
+                fieldName));
         
         /*DefaultMutableTreeNode top = new DefaultMutableTreeNode(treeNode);
         for (ITree child: treeNode.getChildren()) {
