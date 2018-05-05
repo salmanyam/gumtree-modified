@@ -2,6 +2,8 @@
 
 ## This is the original gumtree implementation for finding fine-grained source code changes. This implementation is extended to support the functionalities to describe source code changes using a natural language.
 
+#### This is the code that we have added to the GumTree: https://github.com/salmanyam/gumtree-modified/blob/master/client.diff/src/main/java/com/github/gumtreediff/client/diff/CommitGen.java
+
 ## Status
 
 * Master branch: ![Build Status](https://travis-ci.org/GumTreeDiff/gumtree.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/GumTreeDiff/gumtree/badge.svg?branch=master)](https://coveralls.io/github/GumTreeDiff/gumtree?branch=master)
